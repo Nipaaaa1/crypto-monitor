@@ -1,5 +1,12 @@
 export const COIN_ID = 'bitcoin';
 
+export const SUPPORTED_COINS = [
+  { id: 'bitcoin', name: 'Bitcoin', symbol: 'BTC' },
+  { id: 'ethereum', name: 'Ethereum', symbol: 'ETH' },
+  { id: 'dogecoin', name: 'Dogecoin', symbol: 'DOGE' },
+  { id: 'solana', name: 'Solana', symbol: 'SOL' },
+];
+
 export const currencies = [
   { code: 'USD', symbol: '$', price: '95,420.00', marketCap: '1.88T', volume: '42.5B', cgId: 'usd' },
   { code: 'IDR', symbol: 'Rp', price: '1,512,450,000', marketCap: '29.7P', volume: '672.3T', cgId: 'idr' },
