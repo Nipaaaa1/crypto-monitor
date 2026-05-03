@@ -1,13 +1,15 @@
 ---
 ---
 <div class="bg-stone-900 border border-stone-800 rounded-2xl p-6 mb-12">
-    <div class="flex items-center justify-between mb-6">
-        <h4 class="text-xl font-semibold text-stone-200">Analisis Pasar (7 Hari Terakhir)</h4>
-        <div class="text-xs text-stone-500 bg-stone-950 px-3 py-1 rounded-full border border-stone-800">
-            Live dari CoinGecko
+    <div class="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
+        <h4 class="text-xl font-semibold text-stone-200" id="chart-title">Analisis Pasar (7 Hari Terakhir)</h4>
+        <div class="flex items-center gap-2 bg-stone-950 p-1 rounded-xl border border-stone-800">
+            <button class="timeframe-btn px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 text-stone-400 hover:text-stone-200" data-days="1">24 Jam</button>
+            <button class="timeframe-btn px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 bg-orange-500 text-stone-950 shadow-lg shadow-orange-500/20" data-days="7">7 Hari</button>
+            <button class="timeframe-btn px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 text-stone-400 hover:text-stone-200" data-days="30">30 Hari</button>
         </div>
     </div>
-    <div class="h-[400px] w-full relative">
+    <div class="h-100 w-full relative">
         <canvas id="market-chart"></canvas>
     </div>
 </div>

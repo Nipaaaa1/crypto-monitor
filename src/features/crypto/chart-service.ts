@@ -4,7 +4,14 @@ import { COIN_ID } from './constants';
 let chartInstance: Chart | null = null;
 
 export function updateChart(ctx: CanvasRenderingContext2D, prices: [number, number][], currencyCode: string) {
-    const labels = prices.map(p => new Date(p[0]).toLocaleDateString());
+    const isDayView = prices.length > 0 && (prices[prices.length - 1][0] - prices[0][0]) < 25 * 60 * 60 * 1000;
+    
+    const labels = prices.map(p => {
+        const date = new Date(p[0]);
+        return isDayView 
+            ? date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            : date.toLocaleDateString();
+    });
     const data = prices.map(p => p[1]);
 
     if (chartInstance) {

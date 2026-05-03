@@ -1,8 +1,10 @@
 ---
 import StatCard from "./StatCard.astro";
 ---
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12" id="stats-container">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-12" id="stats-container">
     <StatCard label="Harga Saat Ini" id="display-price" icon="lucide:banknote" />
     <StatCard label="Market Cap" id="display-market-cap" icon="lucide:bar-chart-3" />
     <StatCard label="Volume (24h)" id="display-volume" icon="lucide:refresh-cw" />
+    <StatCard label="Perubahan (24h)" id="display-change-24h" icon="lucide:trending-up" />
+    <StatCard label="Perubahan (30d)" id="display-change-30d" icon="lucide:calendar" />
 </div>

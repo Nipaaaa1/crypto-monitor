@@ -7,6 +7,7 @@ export const server = {
   getCoinData: defineAction({
     input: z.object({
       vsCurrency: z.string(),
+      days: z.string().optional().default('7'),
     }),
     handler: async (input) => {
       try {
@@ -17,7 +18,7 @@ export const server = {
         });
         const statsData = await statsRes.json();
 
-        const chartRes = await fetch(`https://api.coingecko.com/api/v3/coins/${COIN_ID}/market_chart?vs_currency=${input.vsCurrency}&days=7`, {
+        const chartRes = await fetch(`https://api.coingecko.com/api/v3/coins/${COIN_ID}/market_chart?vs_currency=${input.vsCurrency}&days=${input.days}`, {
           headers: {
             "x-cg-demo-api-key": COINGECKO_API_KEY
           }

@@ -25,18 +25,60 @@ import { currencies } from "../features/crypto/constants";
 		const priceDisplay = document.getElementById('display-price');
 		const marketCapDisplay = document.getElementById('display-market-cap');
 		const volumeDisplay = document.getElementById('display-volume');
+		const change24hDisplay = document.getElementById('display-change-24h');
+		const change30dDisplay = document.getElementById('display-change-30d');
+		const chartTitle = document.getElementById('chart-title');
 		const selector = document.getElementById('currency-selector') as HTMLSelectElement;
 		const canvas = document.getElementById('market-chart') as HTMLCanvasElement;
+		const timeframeBtns = document.querySelectorAll('.timeframe-btn');
 		const ctx = canvas?.getContext('2d');
 
-		async function updateDashboard(code: string) {
+		let currentCurrency = 'USD';
+		let currentDays = '7';
+
+		function updateTimeframeUI(days: string) {
+			timeframeBtns.forEach(btn => {
+				const b = btn as HTMLButtonElement;
+				if (b.dataset.days === days) {
+					b.classList.remove('text-stone-400', 'hover:text-stone-200');
+					b.classList.add('bg-orange-500', 'text-stone-950', 'shadow-lg', 'shadow-orange-500/20');
+				} else {
+					b.classList.add('text-stone-400', 'hover:text-stone-200');
+					b.classList.remove('bg-orange-500', 'text-stone-950', 'shadow-lg', 'shadow-orange-500/20');
+				}
+			});
+
+			if (chartTitle) {
+				const labels: Record<string, string> = { '1': '24 Jam', '7': '7 Hari', '30': '30 Hari' };
+				chartTitle.textContent = `Analisis Pasar (${labels[days]} Terakhir)`;
+			}
+		}
+
+		function formatPercentage(value: number) {
+			return (value > 0 ? '+' : '') + value.toFixed(2) + '%';
+		}
+
+		function updatePercentageStyle(el: HTMLElement | null, value: number) {
+			if (!el) return;
+			el.textContent = formatPercentage(value);
+			el.classList.remove('text-green-500', 'text-red-500');
+			el.classList.add(value >= 0 ? 'text-green-500' : 'text-red-500');
+		}
+
+		async function updateDashboard(code: string, days: string = currentDays) {
 			const currency = currencies.find(c => c.code === code);
 			if (!currency || !ctx) return;
+
+			currentCurrency = code;
+			currentDays = days;
 
 			// Show loading state
 			if (priceDisplay) priceDisplay.textContent = '...';
 			
-			const { data, error } = await actions.getCoinData({ vsCurrency: currency.cgId });
+			const { data, error } = await actions.getCoinData({ 
+				vsCurrency: currency.cgId,
+				days: days 
+			});
 			
 			if (error) {
 				console.error('Error fetching via Astro Action:', error);
@@ -50,9 +92,13 @@ import { currencies } from "../features/crypto/constants";
 			if (priceDisplay) priceDisplay.textContent = formatCurrency(marketData.current_price[currency.cgId], currency.code);
 			if (marketCapDisplay) marketCapDisplay.textContent = formatCurrency(marketData.market_cap[currency.cgId], currency.code);
 			if (volumeDisplay) volumeDisplay.textContent = formatCurrency(marketData.total_volume[currency.cgId], currency.code);
+			
+			updatePercentageStyle(change24hDisplay, marketData.price_change_percentage_24h);
+			updatePercentageStyle(change30dDisplay, marketData.price_change_percentage_30d);
 
 			// Update Chart
 			updateChart(ctx, chartData.prices, currency.code);
+			updateTimeframeUI(days);
 		}
 
 		// Initialize
@@ -62,6 +108,14 @@ import { currencies } from "../features/crypto/constants";
 		selector?.addEventListener('change', (e) => {
 			const target = e.target as HTMLSelectElement;
 			updateDashboard(target.value);
+		});
+
+		timeframeBtns.forEach(btn => {
+			btn.addEventListener('click', (e) => {
+				const target = e.currentTarget as HTMLButtonElement;
+				const days = target.dataset.days;
+				if (days) updateDashboard(currentCurrency, days);
+			});
 		});
 	</script>
 </BaseLayout>
