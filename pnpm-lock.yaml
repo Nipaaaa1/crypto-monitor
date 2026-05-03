@@ -13,13 +13,16 @@ importers:
         version: 4.2.4(vite@7.3.2(jiti@2.6.1)(lightningcss@1.32.0))
       astro:
         specifier: ^6.2.1
-        version: 6.2.1(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.60.2)
+        version: 6.2.1(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.60.2)(typescript@6.0.3)
       chart.js:
         specifier: ^4.5.1
         version: 4.5.1
       tailwindcss:
         specifier: ^4.2.4
         version: 4.2.4
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
 
 packages:
 
@@ -1454,6 +1457,11 @@ packages:
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
 
+  typescript@6.0.3:
+    resolution: {integrity: sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+
   ufo@1.6.4:
     resolution: {integrity: sha512-JFNbkD1Svwe0KvGi8GOeLcP4kAWQ609twvCdcHxq1oSL8svv39ZuSvajcD8B+5D0eL4+s1Is2D/O6KN3qcTeRA==}
 
@@ -2144,7 +2152,7 @@ snapshots:
 
   array-iterate@2.0.1: {}
 
-  astro@6.2.1(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.60.2):
+  astro@6.2.1(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.60.2)(typescript@6.0.3):
     dependencies:
       '@astrojs/compiler': 4.0.0
       '@astrojs/internal-helpers': 0.9.0
@@ -2189,7 +2197,7 @@ snapshots:
       tinyclip: 0.1.12
       tinyexec: 1.1.2
       tinyglobby: 0.2.16
-      tsconfck: 3.1.6
+      tsconfck: 3.1.6(typescript@6.0.3)
       ultrahtml: 1.6.0
       unifont: 0.7.4
       unist-util-visit: 5.1.0
@@ -3242,10 +3250,14 @@ snapshots:
 
   trough@2.2.0: {}
 
-  tsconfck@3.1.6: {}
+  tsconfck@3.1.6(typescript@6.0.3):
+    optionalDependencies:
+      typescript: 6.0.3
 
   tslib@2.8.1:
     optional: true
+
+  typescript@6.0.3: {}
 
   ufo@1.6.4: {}
 
