@@ -1,0 +1,13 @@
+---
+import { currencies } from "../constants";
+---
+<div class="flex p-1 bg-stone-900 rounded-lg border border-stone-800" id="currency-tabs">
+    {currencies.map((curr) => (
+        <button 
+            data-currency={curr.code}
+            class="currency-btn px-6 py-2 rounded-md text-sm font-medium transition-all duration-200"
+        >
+            {curr.code}
+        </button>
+    ))}
+</div>

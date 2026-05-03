@@ -1,113 +1,56 @@
 ---
-import "../assets/css/main.css"
-
-const currencies = [
-  { code: 'USD', symbol: '$', price: '95,420.00', marketCap: '1.88T', volume: '42.5B' },
-  { code: 'IDR', symbol: 'Rp', price: '1,512,450,000', marketCap: '29.7P', volume: '672.3T' },
-  { code: 'EUR', symbol: '€', price: '88,150.00', marketCap: '1.74T', volume: '39.2B' },
-];
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../features/crypto/components/Header.astro";
+import CurrencyTabs from "../features/crypto/components/CurrencyTabs.astro";
+import StatsGrid from "../features/crypto/components/StatsGrid.astro";
+import MarketAnalysis from "../features/crypto/components/MarketAnalysis.astro";
+import { currencies } from "../features/crypto/constants";
 ---
 
-<html lang="id">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Crypto Monitor</title>
-	</head>
-	<body class="bg-stone-950 text-stone-100 min-h-screen font-sans">
-		<main class="max-w-5xl mx-auto px-4 py-12">
-			<!-- Header -->
-			<header class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
-				<div>
-					<h1 class="text-4xl font-bold tracking-tight mb-2">
-            Crypto <span class="text-orange-500">Monitor</span>
-          </h1>
-					<p class="text-stone-400">Monitoring harga real-time (placeholder data)</p>
-				</div>
-				
-				<!-- Currency Tabs -->
-				<div class="flex p-1 bg-stone-900 rounded-lg border border-stone-800" id="currency-tabs">
-					{currencies.map((curr) => (
-						<button 
-							data-currency={curr.code}
-							class="currency-btn px-6 py-2 rounded-md text-sm font-medium transition-all duration-200"
-						>
-							{curr.code}
-						</button>
-					))}
-				</div>
-			</header>
+<BaseLayout title="Crypto Monitor">
+	<Header>
+		<CurrencyTabs />
+	</Header>
 
-			<!-- Stats Grid -->
-			<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12" id="stats-container">
-				<!-- Price Card -->
-				<div class="bg-stone-900 p-8 rounded-2xl border border-stone-800 shadow-xl">
-					<p class="text-stone-400 text-sm font-medium mb-1 uppercase tracking-wider">Harga Saat Ini</p>
-					<h3 class="text-3xl font-bold" id="display-price"></h3>
-				</div>
+	<StatsGrid />
 
-				<!-- Market Cap Card -->
-				<div class="bg-stone-900 p-8 rounded-2xl border border-stone-800 shadow-xl">
-					<p class="text-stone-400 text-sm font-medium mb-1 uppercase tracking-wider">Market Cap</p>
-					<h3 class="text-3xl font-bold" id="display-market-cap"></h3>
-				</div>
+	<MarketAnalysis />
 
-				<!-- Volume Card -->
-				<div class="bg-stone-900 p-8 rounded-2xl border border-stone-800 shadow-xl">
-					<p class="text-stone-400 text-sm font-medium mb-1 uppercase tracking-wider">Volume (24h)</p>
-					<h3 class="text-3xl font-bold" id="display-volume"></h3>
-				</div>
-			</div>
+	<script define:vars={{ currencies }}>
+		const priceDisplay = document.getElementById('display-price');
+		const marketCapDisplay = document.getElementById('display-market-cap');
+		const volumeDisplay = document.getElementById('display-volume');
+		const buttons = document.querySelectorAll('.currency-btn');
 
-			<!-- Visual Hint -->
-			<div class="bg-stone-900/50 border border-stone-800 rounded-2xl p-12 text-center">
-				<div class="w-16 h-16 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-					<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-orange-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
-				</div>
-				<h4 class="text-xl font-semibold mb-2 text-stone-200">Analisis Pasar</h4>
-				<p class="text-stone-500 max-w-md mx-auto">Grafik performa akan ditampilkan di sini setelah API terintegrasi dengan data riwayat harga.</p>
-			</div>
-		</main>
+		function updateDashboard(code) {
+			const data = currencies.find(c => c.code === code);
+			if (!data) return;
 
-		<script define:vars={{ currencies }}>
-			const priceDisplay = document.getElementById('display-price');
-			const marketCapDisplay = document.getElementById('display-market-cap');
-			const volumeDisplay = document.getElementById('display-volume');
-			const buttons = document.querySelectorAll('.currency-btn');
+			// Update text
+			priceDisplay.textContent = `${data.symbol}${data.price}`;
+			marketCapDisplay.textContent = `${data.symbol}${data.marketCap}`;
+			volumeDisplay.textContent = `${data.symbol}${data.volume}`;
 
-			function updateDashboard(code) {
-				const data = currencies.find(c => c.code === code);
-				if (!data) return;
-
-				// Update text
-				priceDisplay.textContent = `${data.symbol}${data.price}`;
-				marketCapDisplay.textContent = `${data.symbol}${data.marketCap}`;
-				volumeDisplay.textContent = `${data.symbol}${data.volume}`;
-
-				// Update buttons style
-				buttons.forEach(btn => {
-					if (btn.dataset.currency === code) {
-						btn.classList.add('bg-orange-500', 'text-stone-950', 'shadow-lg');
-						btn.classList.remove('text-stone-400', 'hover:text-stone-100');
-					} else {
-						btn.classList.remove('bg-orange-500', 'text-stone-950', 'shadow-lg');
-						btn.classList.add('text-stone-400', 'hover:text-stone-100');
-					}
-				});
-			}
-
-			// Initialize
-			updateDashboard('USD');
-
-			// Add event listeners
+			// Update buttons style
 			buttons.forEach(btn => {
-				btn.addEventListener('click', () => {
-					updateDashboard(btn.dataset.currency);
-				});
+				if (btn.dataset.currency === code) {
+					btn.classList.add('bg-orange-500', 'text-stone-950', 'shadow-lg');
+					btn.classList.remove('text-stone-400', 'hover:text-stone-100');
+				} else {
+					btn.classList.remove('bg-orange-500', 'text-stone-950', 'shadow-lg');
+					btn.classList.add('text-stone-400', 'hover:text-stone-100');
+				}
 			});
-		</script>
-	</body>
-</html>
+		}
+
+		// Initialize
+		updateDashboard('USD');
+
+		// Add event listeners
+		buttons.forEach(btn => {
+			btn.addEventListener('click', () => {
+				updateDashboard(btn.dataset.currency);
+			});
+		});
+	</script>
+</BaseLayout>
