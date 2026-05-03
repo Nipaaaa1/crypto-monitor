@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../features/crypto/components/Header.astro";
-import CurrencyTabs from "../features/crypto/components/CurrencyTabs.astro";
+import CurrencySelector from "../features/crypto/components/CurrencySelector.astro";
 import StatsGrid from "../features/crypto/components/StatsGrid.astro";
 import MarketAnalysis from "../features/crypto/components/MarketAnalysis.astro";
 import { currencies } from "../features/crypto/constants";
@@ -9,7 +9,7 @@ import { currencies } from "../features/crypto/constants";
 
 <BaseLayout title="Crypto Monitor">
 	<Header>
-		<CurrencyTabs />
+		<CurrencySelector />
 	</Header>
 
 	<StatsGrid />
@@ -25,25 +25,13 @@ import { currencies } from "../features/crypto/constants";
 		const priceDisplay = document.getElementById('display-price');
 		const marketCapDisplay = document.getElementById('display-market-cap');
 		const volumeDisplay = document.getElementById('display-volume');
-		const buttons = document.querySelectorAll('.currency-btn');
+		const selector = document.getElementById('currency-selector') as HTMLSelectElement;
 		const canvas = document.getElementById('market-chart') as HTMLCanvasElement;
 		const ctx = canvas?.getContext('2d');
 
 		async function updateDashboard(code: string) {
 			const currency = currencies.find(c => c.code === code);
 			if (!currency || !ctx) return;
-
-			// Update buttons style
-			buttons.forEach(btn => {
-				const button = btn as HTMLButtonElement;
-				if (button.dataset.currency === code) {
-					button.classList.add('bg-orange-500', 'text-stone-950', 'shadow-lg');
-					button.classList.remove('text-stone-400', 'hover:text-stone-100');
-				} else {
-					button.classList.remove('bg-orange-500', 'text-stone-950', 'shadow-lg');
-					button.classList.add('text-stone-400', 'hover:text-stone-100');
-				}
-			});
 
 			// Show loading state
 			if (priceDisplay) priceDisplay.textContent = '...';
@@ -71,11 +59,9 @@ import { currencies } from "../features/crypto/constants";
 		updateDashboard('USD');
 
 		// Add event listeners
-		buttons.forEach(btn => {
-			btn.addEventListener('click', () => {
-				const button = btn as HTMLButtonElement;
-				updateDashboard(button.dataset.currency!);
-			});
+		selector?.addEventListener('change', (e) => {
+			const target = e.target as HTMLSelectElement;
+			updateDashboard(target.value);
 		});
 	</script>
 </BaseLayout>
