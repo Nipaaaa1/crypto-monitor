@@ -13,8 +13,10 @@
   },
   "dependencies": {
     "@astrojs/node": "^10.0.6",
+    "@iconify-json/lucide": "^1.2.105",
     "@tailwindcss/vite": "^4.2.4",
     "astro": "^6.2.1",
+    "astro-icon": "^1.1.5",
     "chart.js": "^4.5.1",
     "tailwindcss": "^4.2.4",
     "typescript": "^6.0.3"

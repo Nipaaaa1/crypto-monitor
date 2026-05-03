@@ -4,6 +4,8 @@ import { defineConfig, envField } from 'astro/config';
 
 import node from "@astrojs/node";
 
+import icon from "astro-icon";
+
 // https://astro.build/config
 export default defineConfig({
   env: {
@@ -18,5 +20,7 @@ export default defineConfig({
 
   adapter: node({
     mode: "standalone"
-  })
+  }),
+
+  integrations: [icon()]
 });
