@@ -1,0 +1,56 @@
+import { Chart } from 'chart.js/auto';
+import { COIN_ID } from './constants';
+
+let chartInstance: Chart | null = null;
+
+export function updateChart(ctx: CanvasRenderingContext2D, prices: [number, number][], currencyCode: string) {
+    const labels = prices.map(p => new Date(p[0]).toLocaleDateString());
+    const data = prices.map(p => p[1]);
+
+    if (chartInstance) {
+        chartInstance.destroy();
+    }
+
+    chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: `Harga ${COIN_ID.toUpperCase()} (${currencyCode})`,
+                data: data,
+                borderColor: '#f97316',
+                backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#78716c', maxTicksLimit: 7 }
+                },
+                y: {
+                    grid: { color: '#292524' },
+                    ticks: { 
+                        color: '#78716c',
+                        callback: (value) => {
+                            const val = Number(value);
+                            if (val >= 1e12) return (val / 1e12).toFixed(1) + 'T';
+                            if (val >= 1e9) return (val / 1e9).toFixed(1) + 'B';
+                            if (val >= 1e6) return (val / 1e6).toFixed(1) + 'M';
+                            return val;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}

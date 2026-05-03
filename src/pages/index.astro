@@ -16,31 +16,55 @@ import { currencies } from "../features/crypto/constants";
 
 	<MarketAnalysis />
 
-	<script define:vars={{ currencies }}>
+	<script>
+		import { actions } from "astro:actions";
+		import { currencies } from "../features/crypto/constants";
+		import { formatCurrency } from "../features/crypto/utils";
+		import { updateChart } from "../features/crypto/chart-service";
+
 		const priceDisplay = document.getElementById('display-price');
 		const marketCapDisplay = document.getElementById('display-market-cap');
 		const volumeDisplay = document.getElementById('display-volume');
 		const buttons = document.querySelectorAll('.currency-btn');
+		const canvas = document.getElementById('market-chart') as HTMLCanvasElement;
+		const ctx = canvas?.getContext('2d');
 
-		function updateDashboard(code) {
-			const data = currencies.find(c => c.code === code);
-			if (!data) return;
-
-			// Update text
-			priceDisplay.textContent = `${data.symbol}${data.price}`;
-			marketCapDisplay.textContent = `${data.symbol}${data.marketCap}`;
-			volumeDisplay.textContent = `${data.symbol}${data.volume}`;
+		async function updateDashboard(code: string) {
+			const currency = currencies.find(c => c.code === code);
+			if (!currency || !ctx) return;
 
 			// Update buttons style
 			buttons.forEach(btn => {
-				if (btn.dataset.currency === code) {
-					btn.classList.add('bg-orange-500', 'text-stone-950', 'shadow-lg');
-					btn.classList.remove('text-stone-400', 'hover:text-stone-100');
+				const button = btn as HTMLButtonElement;
+				if (button.dataset.currency === code) {
+					button.classList.add('bg-orange-500', 'text-stone-950', 'shadow-lg');
+					button.classList.remove('text-stone-400', 'hover:text-stone-100');
 				} else {
-					btn.classList.remove('bg-orange-500', 'text-stone-950', 'shadow-lg');
-					btn.classList.add('text-stone-400', 'hover:text-stone-100');
+					button.classList.remove('bg-orange-500', 'text-stone-950', 'shadow-lg');
+					button.classList.add('text-stone-400', 'hover:text-stone-100');
 				}
 			});
+
+			// Show loading state
+			if (priceDisplay) priceDisplay.textContent = '...';
+			
+			const { data, error } = await actions.getCoinData({ vsCurrency: currency.cgId });
+			
+			if (error) {
+				console.error('Error fetching via Astro Action:', error);
+				return;
+			}
+
+			const { statsData, chartData } = data;
+			const marketData = statsData.market_data;
+
+			// Update Stats
+			if (priceDisplay) priceDisplay.textContent = formatCurrency(marketData.current_price[currency.cgId], currency.code);
+			if (marketCapDisplay) marketCapDisplay.textContent = formatCurrency(marketData.market_cap[currency.cgId], currency.code);
+			if (volumeDisplay) volumeDisplay.textContent = formatCurrency(marketData.total_volume[currency.cgId], currency.code);
+
+			// Update Chart
+			updateChart(ctx, chartData.prices, currency.code);
 		}
 
 		// Initialize
@@ -49,7 +73,8 @@ import { currencies } from "../features/crypto/constants";
 		// Add event listeners
 		buttons.forEach(btn => {
 			btn.addEventListener('click', () => {
-				updateDashboard(btn.dataset.currency);
+				const button = btn as HTMLButtonElement;
+				updateDashboard(button.dataset.currency!);
 			});
 		});
 	</script>
