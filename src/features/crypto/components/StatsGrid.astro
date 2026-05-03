@@ -8,3 +8,45 @@ import StatCard from "./StatCard.astro";
     <StatCard label="Perubahan (24h)" id="display-change-24h" icon="lucide:trending-up" />
     <StatCard label="Perubahan (30d)" id="display-change-30d" icon="lucide:calendar" />
 </div>
+
+<script>
+    import { $cryptoData, $currentCurrency, $isLoading } from '../stores';
+    import { formatCurrency } from '../utils';
+
+    const priceDisplay = document.getElementById('display-price');
+    const marketCapDisplay = document.getElementById('display-market-cap');
+    const volumeDisplay = document.getElementById('display-volume');
+    const change24hDisplay = document.getElementById('display-change-24h');
+    const change30dDisplay = document.getElementById('display-change-30d');
+
+    function formatPercentage(value: number) {
+        return (value > 0 ? '+' : '') + value.toFixed(2) + '%';
+    }
+
+    function updatePercentageStyle(el: HTMLElement | null, value: number) {
+        if (!el) return;
+        el.textContent = formatPercentage(value);
+        el.classList.remove('text-green-500', 'text-red-500');
+        el.classList.add(value >= 0 ? 'text-green-500' : 'text-red-500');
+    }
+
+    $isLoading.subscribe((loading) => {
+        if (loading && priceDisplay) {
+            priceDisplay.textContent = '...';
+        }
+    });
+
+    $cryptoData.subscribe((data) => {
+        if (!data) return;
+
+        const currency = $currentCurrency.get();
+        const marketData = data.statsData.market_data;
+
+        if (priceDisplay) priceDisplay.textContent = formatCurrency(marketData.current_price[currency.cgId], currency.code);
+        if (marketCapDisplay) marketCapDisplay.textContent = formatCurrency(marketData.market_cap[currency.cgId], currency.code);
+        if (volumeDisplay) volumeDisplay.textContent = formatCurrency(marketData.total_volume[currency.cgId], currency.code);
+        
+        updatePercentageStyle(change24hDisplay, marketData.price_change_percentage_24h);
+        updatePercentageStyle(change30dDisplay, marketData.price_change_percentage_30d);
+    });
+</script>

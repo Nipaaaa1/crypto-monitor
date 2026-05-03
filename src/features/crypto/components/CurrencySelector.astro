@@ -17,3 +17,22 @@ import { currencies } from "../constants";
         <Icon name="lucide:chevron-down" class="w-4 h-4" />
     </div>
 </div>
+
+<script>
+    import { $currencyCode } from '../stores';
+
+    const currencySelector = document.getElementById('currency-selector') as HTMLSelectElement;
+
+    // Update store when selection changes
+    currencySelector?.addEventListener('change', (e) => {
+        const target = e.target as HTMLSelectElement;
+        $currencyCode.set(target.value);
+    });
+
+    // Sync UI with store
+    $currencyCode.subscribe((code) => {
+        if (currencySelector && currencySelector.value !== code) {
+            currencySelector.value = code;
+        }
+    });
+</script>

@@ -17,3 +17,22 @@ import { SUPPORTED_COINS } from "../constants";
         <Icon name="lucide:chevron-down" class="w-4 h-4" />
     </div>
 </div>
+
+<script>
+    import { $coinId } from '../stores';
+
+    const cryptoSelector = document.getElementById('crypto-selector') as HTMLSelectElement;
+    
+    // Update store when selection changes
+    cryptoSelector?.addEventListener('change', (e) => {
+        const target = e.target as HTMLSelectElement;
+        $coinId.set(target.value);
+    });
+
+    // Sync UI with store
+    $coinId.subscribe((id) => {
+        if (cryptoSelector && cryptoSelector.value !== id) {
+            cryptoSelector.value = id;
+        }
+    });
+</script>

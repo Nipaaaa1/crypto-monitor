@@ -5,7 +5,7 @@
         <h4 class="text-xl font-semibold text-stone-200" id="chart-title">Analisis Pasar (7 Hari Terakhir)</h4>
         <div class="flex items-center gap-2 bg-stone-950 p-1 rounded-xl border border-stone-800">
             <button class="timeframe-btn px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 text-stone-400 hover:text-stone-200" data-days="1">24 Jam</button>
-            <button class="timeframe-btn px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 bg-orange-500 text-stone-950 shadow-lg shadow-orange-500/20" data-days="7">7 Hari</button>
+            <button class="timeframe-btn px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 text-stone-400 hover:text-stone-200" data-days="7">7 Hari</button>
             <button class="timeframe-btn px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 text-stone-400 hover:text-stone-200" data-days="30">30 Hari</button>
         </div>
     </div>
@@ -13,3 +13,55 @@
         <canvas id="market-chart"></canvas>
     </div>
 </div>
+
+<script>
+    import { $cryptoData, $timeframe, $currentCurrency, $currentCoin } from '../stores';
+    import { updateChart } from '../chart-service';
+
+    const chartTitle = document.getElementById('chart-title');
+    const canvas = document.getElementById('market-chart') as HTMLCanvasElement;
+    const timeframeBtns = document.querySelectorAll('.timeframe-btn');
+    const ctx = canvas?.getContext('2d');
+
+    function updateTimeframeUI(days: string) {
+        timeframeBtns.forEach(btn => {
+            const b = btn as HTMLButtonElement;
+            if (b.dataset.days === days) {
+                b.classList.remove('text-stone-400', 'hover:text-stone-200');
+                b.classList.add('bg-orange-500', 'text-stone-950', 'shadow-lg', 'shadow-orange-500/20');
+            } else {
+                b.classList.add('text-stone-400', 'hover:text-stone-200');
+                b.classList.remove('bg-orange-500', 'text-stone-950', 'shadow-lg', 'shadow-orange-500/20');
+            }
+        });
+
+        if (chartTitle) {
+            const labels: Record<string, string> = { '1': '24 Jam', '7': '7 Hari', '30': '30 Hari' };
+            chartTitle.textContent = `Analisis Pasar (${labels[days]} Terakhir)`;
+        }
+    }
+
+    // Update store when timeframe button clicked
+    timeframeBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const target = e.currentTarget as HTMLButtonElement;
+            const days = target.dataset.days;
+            if (days) $timeframe.set(days);
+        });
+    });
+
+    // Sync UI with timeframe store
+    $timeframe.subscribe((days) => {
+        updateTimeframeUI(days);
+    });
+
+    // Update chart when data changes
+    $cryptoData.subscribe((data) => {
+        if (!data || !ctx) return;
+        
+        const currency = $currentCurrency.get();
+        const coin = $currentCoin.get();
+        
+        updateChart(ctx, data.chartData.prices, currency.code, coin.name);
+    });
+</script>
