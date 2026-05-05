@@ -30,10 +30,25 @@ import StatCard from "./StatCard.astro";
         el.classList.add(value >= 0 ? 'text-green-500' : 'text-red-500');
     }
 
+    function toggleLoading(isLoading: boolean) {
+        const ids = ['display-price', 'display-market-cap', 'display-volume', 'display-change-24h', 'display-change-30d'];
+        
+        ids.forEach(id => {
+            const content = document.getElementById(id);
+            const skeleton = document.getElementById(`${id}-skeleton`);
+            
+            if (isLoading) {
+                if (content) content.classList.add('opacity-0');
+                if (skeleton) skeleton.classList.remove('hidden');
+            } else {
+                if (content) content.classList.remove('opacity-0');
+                if (skeleton) skeleton.classList.add('hidden');
+            }
+        });
+    }
+
     $isLoading.subscribe((loading) => {
-        if (loading && priceDisplay) {
-            priceDisplay.textContent = '...';
-        }
+        toggleLoading(loading);
     });
 
     $cryptoData.subscribe((data) => {
@@ -48,5 +63,8 @@ import StatCard from "./StatCard.astro";
         
         updatePercentageStyle(change24hDisplay, marketData.price_change_percentage_24h);
         updatePercentageStyle(change30dDisplay, marketData.price_change_percentage_30d);
+        
+        // Ensure loading is turned off if data arrives
+        toggleLoading(false);
     });
 </script>

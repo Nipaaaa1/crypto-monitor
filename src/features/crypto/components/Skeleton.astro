@@ -1,0 +1,9 @@
+---
+interface Props {
+    class?: string;
+}
+const { class: className } = Astro.props;
+---
+<div class:list={["bg-stone-800/50 rounded overflow-hidden relative", className]}>
+    <div class="absolute inset-0 animate-skeleton"></div>
+</div>
