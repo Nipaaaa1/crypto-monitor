@@ -12,7 +12,7 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/node": "^10.0.6",
+    "@astrojs/netlify": "^7.0.8",
     "@iconify-json/lucide": "^1.2.105",
     "@nanostores/query": "^0.3.4",
     "@tailwindcss/vite": "^4.2.4",

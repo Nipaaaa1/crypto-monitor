@@ -2,9 +2,9 @@
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig, envField } from 'astro/config';
 
-import node from "@astrojs/node";
-
 import icon from "astro-icon";
+
+import netlify from "@astrojs/netlify";
 
 // https://astro.build/config
 export default defineConfig({
@@ -18,9 +18,7 @@ export default defineConfig({
     plugins: [tailwindcss()]
   },
 
-  adapter: node({
-    mode: "standalone"
-  }),
+  adapter: netlify(),
 
   integrations: [icon()]
 });
